@@ -3,6 +3,7 @@
 -behaviour(gen_server).
 -behaviour(poolboy_worker).
 
+-define(CONNECT_TIMEOUT, 60000). % 1 min
 
 %% gen_server callbacks
 -export([%start_link/0, 
@@ -232,7 +233,7 @@ file_wrapper(Path, DecryptState0) ->
 %%--------------------------------------------------------------------
 
 connect(#state{host=Host, port=Port} = State) ->
-    case gen_tcp:connect(Host, Port, [list, {packet, raw}, {active, false}]) of
+    case gen_tcp:connect(Host, Port, [list, {packet, raw}, {active, false}], ?CONNECT_TIMEOUT) of
         {ok, Socket} ->
             {ok, State#state{
                 socket = Socket,

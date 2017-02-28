@@ -2,6 +2,7 @@
 
 -export([start_stream/1, chunk_stream/2, end_stream/1, message/1, ask/2, scan/2]).
 
+-define(RECV_TIMEOUT, 300000). % 5 min
 
 start_stream(Socket) ->
     gen_tcp:send(Socket, message("INSTREAM")).
@@ -47,7 +48,7 @@ ask(Socket, Action) ->
 response(Socket) ->
     response(Socket, []).
 response(Socket, Acc) ->
-    case gen_tcp:recv(Socket, 1) of
+    case gen_tcp:recv(Socket, 1, ?RECV_TIMEOUT) of
         {ok, Packet} ->
             case Packet of
                 [0] ->
