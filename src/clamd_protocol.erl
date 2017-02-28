@@ -50,7 +50,9 @@ response(Socket, Acc) ->
     case gen_tcp:recv(Socket, 1) of
         {ok, Packet} ->
             case Packet of
-                [0] -> {ok, Acc};
+                [0] ->
+                    gen_tcp:close(Socket),
+                    {ok, Acc};
                 _ -> response(Socket, Acc ++ Packet)
             end;
         {error, Reason} -> {error, Reason}
